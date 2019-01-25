@@ -1,4 +1,4 @@
-COLORS = {-2: "orange", -1: "red", 0: "gray", 1: "green", 2: "blue"}
+COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
 
 class Picture():
 	def __init__(self, width, height):

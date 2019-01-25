@@ -2,7 +2,6 @@ import result
 from fractions import Fraction
 
 RESULTS = {"ExistsViolated": -2, "AllViolated": -1, "AllSat": 1, "Unknown": 0, "ExistsSat": 2}
-#TBA ExistsViolated
 
 class Parser():
 	def __init__(self):
