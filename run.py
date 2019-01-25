@@ -3,9 +3,13 @@ import parsing
 import sys
 
 def get_max_results(regions):
-	width = max(list(map(lambda result: result.get_max_x(), regions)))
-	height = max(list(map(lambda result: result.get_max_y(), regions)))
-	return width, height
+	w_max = max(list(map(lambda result: result.get_max_x(), regions)))
+	h_max = max(list(map(lambda result: result.get_max_y(), regions)))
+
+	w_min = min(list(map(lambda result: result.get_min_x(), regions)))
+	h_min = min(list(map(lambda result: result.get_min_y(), regions)))
+
+	return w_max - w_min, h_max - h_min
 
 filename = sys.argv[-2]
 output_name = sys.argv[-1]

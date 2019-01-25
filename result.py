@@ -9,5 +9,11 @@ class Result():
 	def get_max_y(self):
 		return self.points[3]
 
+	def get_min_x(self):
+		return self.points[0]
+
+	def get_min_y(self):
+		return self.points[2]
+
 	def __str__(self):
 		return str(self.points) + " " + str(self.sat)
