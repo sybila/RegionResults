@@ -4,21 +4,21 @@ class Picture():
 	def __init__(self, w_min, w_max, h_min, h_max):
 		self.regions = []
 		self.w_min, self.w_max, self.h_min, self.h_max = w_min, w_max, h_min, h_max
-		width = w_max - w_min
-		height = h_max - h_min
-		self.offset = width/10 if width < height else height/10
-		self.x_scale, self.y_scale = self.calculate_scales(width, height)
+		self.width = w_max - w_min
+		self.height = h_max - h_min
+		self.offset = self.width/10 if self.width < self.height else self.height/10
+		self.x_scale, self.y_scale = self.calculate_scales()
 		self.lines = []
 		self.texts = []
-		self.header = '<svg width="' + str(width*self.x_scale + self.offset) + '" height="' + str(height*self.y_scale + self.offset) + '">\n'
+		self.header = '<svg width="' + str(self.width*self.x_scale + self.offset) + '" height="' + str(self.height*self.y_scale + self.offset) + '">\n'
 		self.footer = '</svg>'
-		self.add_axis_description(width*self.x_scale, height*self.y_scale, width, height)
+		self.add_axis_description(self.width*self.x_scale, self.height*self.y_scale)
 
-	def calculate_scales(self, width, height):
-		if height > width:
-			return height/width, 1
+	def calculate_scales(self):
+		if self.height > self.width:
+			return self.height/self.width, 1
 		else:
-			return 1, width/height
+			return 1, self.width/self.height
 
 	def load_rectangles(self, rectangles):
 		for result in rectangles:
@@ -33,20 +33,20 @@ class Picture():
 		self.regions.append('<rect x="{0}" y="{1}" width="{2}" height="{3}" style="fill:{4}" />'.\
 				format(x, y, width, height, COLORS[result]))
 
-	def add_axis_description(self, width, height, text_width, text_height):
+	def add_axis_description(self, scaled_width, scaled_height):
 		self.add_line(self.offset, self.offset, \
-					  self.offset, self.offset + height)
+					  self.offset, self.offset + scaled_height)
 		self.add_line(self.offset, self.offset, \
-					  self.offset + width, self.offset)
+					  self.offset + scaled_width, self.offset)
 		for i in range(11):
-			y = self.offset + (height/10)*i
+			y = self.offset + (scaled_height/10)*i
 			self.add_line(self.offset - self.offset/5, y, self.offset, y)
-			self.add_text(self.offset/20, y, "{0:.2f}".format(self.h_min + (text_height/10)*i))
+			self.add_text(self.offset/20, y, "{0:.2f}".format(self.h_min + (self.height/10)*i))
 
 		for i in range(10):
-			x = self.offset + (width/10)*i
+			x = self.offset + (scaled_width/10)*i
 			self.add_line(x, self.offset - self.offset/5, x, self.offset)
-			self.add_text(x - self.offset/5, self.offset/3, "{0:.2f}".format(self.w_min + (text_width/10)*i))
+			self.add_text(x - self.offset/5, self.offset/3, "{0:.2f}".format(self.w_min + (self.width/10)*i))
 
 	def add_text(self, x, y, text):
 		self.texts.append('<text x="{0}" y="{1}" font-size="{2}">{3}</text>'\
