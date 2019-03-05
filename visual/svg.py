@@ -1,3 +1,5 @@
+import svg
+
 COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
 
 class Picture():
@@ -27,6 +29,8 @@ class Picture():
 
 	def load_points(self, points):
 		for (x, y, value) in points:
+			x = x*self.x_scale + self.offset - self.w_min
+			y = y*self.y_scale + self.offset - self.h_min
 			self.add_point(x, y, self.colorify(value))
 
 	# x1, x2, y1, y2
@@ -59,23 +63,26 @@ class Picture():
 
 	def add_line(self, x1, y1, x2, y2):
 		self.lines.append('<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" \
-			style="stroke:black;stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/30))
+ style="stroke:black;stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/30))
 
 	def add_point(self, x, y, color):
 		self.points.append('<circle cx="{0}" cy="{1}"\
-			 r="f" stroke="black" stroke-width="1" fill="{2}" />'.format(x, y, color))
+ r="{2}" stroke="{4}" stroke-width="{3}" fill="{4}" />'.format(x, y, self.offset/50, self.offset/500, color))
 
 	def save(self, filename):
 		f = open(filename, "w")
 		f.write(self.header)
 		for region in self.regions:
-			f.write(region)
+			f.write(region + "\n")
 		for line in self.lines:
-			f.write(line)
+			f.write(line + "\n")
 		for text in self.texts:
-			f.write(text)
+			f.write(text + "\n")
+		for point in self.points:
+			f.write(point + "\n")
 		f.write(self.footer)
 		f.close()
 
 	def colorify(self, value):
-		return #some color
+		num = int(value*255)
+		return 'rgb({0},{0},{0})'.format(num)
