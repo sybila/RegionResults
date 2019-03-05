@@ -6,7 +6,7 @@ class Picture():
 		self.w_min, self.w_max, self.h_min, self.h_max = w_min, w_max, h_min, h_max
 		self.width = w_max - w_min
 		self.height = h_max - h_min
-		self.offset = self.width/10 if self.width < self.height else self.height/10
+		self.offset = self.width/3 if self.width < self.height else self.height/3
 		self.x_scale, self.y_scale = self.calculate_scales()
 		self.lines = []
 		self.texts = []
@@ -46,15 +46,15 @@ class Picture():
 		for i in range(10):
 			x = self.offset + (scaled_width/10)*i
 			self.add_line(x, self.offset - self.offset/5, x, self.offset)
-			self.add_text(x - self.offset/5, self.offset/3, "{0:.2f}".format(self.w_min + (self.width/10)*i))
+			self.add_text(x - self.offset/5, self.offset/2, "{0:.2f}".format(self.w_min + (self.width/10)*i))
 
 	def add_text(self, x, y, text):
 		self.texts.append('<text x="{0}" y="{1}" font-size="{2}">{3}</text>'\
-				  .format(x, y, self.offset/3, text))
+				  .format(x, y, self.offset/4, text))
 
 	def add_line(self, x1, y1, x2, y2):
 		self.lines.append('<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" \
-			style="stroke:black;stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/15))
+			style="stroke:black;stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/30))
 
 	def save(self, filename):
 		f = open(filename, "w")
