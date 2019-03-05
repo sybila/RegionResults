@@ -10,6 +10,7 @@ class Picture():
 		self.x_scale, self.y_scale = self.calculate_scales()
 		self.lines = []
 		self.texts = []
+		self.points = []
 		self.header = '<svg width="' + str(self.width*self.x_scale + self.offset) + '" height="' + str(self.height*self.y_scale + self.offset) + '">\n'
 		self.footer = '</svg>'
 		self.add_axis_description(self.width*self.x_scale, self.height*self.y_scale)
@@ -23,6 +24,10 @@ class Picture():
 	def load_rectangles(self, rectangles):
 		for result in rectangles:
 			self.add_rectangle(result.points, result.sat)
+
+	def load_points(self, points):
+		for (x, y, value) in points:
+			self.add_point(x, y, self.colorify(value))
 
 	# x1, x2, y1, y2
 	def add_rectangle(self, points, result):
@@ -56,6 +61,10 @@ class Picture():
 		self.lines.append('<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" \
 			style="stroke:black;stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/30))
 
+	def add_point(self, x, y, color):
+		self.points.append('<circle cx="{0}" cy="{1}"\
+			 r="f" stroke="black" stroke-width="1" fill="{2}" />'.format(x, y, color))
+
 	def save(self, filename):
 		f = open(filename, "w")
 		f.write(self.header)
@@ -67,3 +76,6 @@ class Picture():
 			f.write(text)
 		f.write(self.footer)
 		f.close()
+
+	def colorify(self, value):
+		return #some color
