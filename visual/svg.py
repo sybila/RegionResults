@@ -1,4 +1,5 @@
 import svg
+import math
 
 COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
 
@@ -72,17 +73,30 @@ class Picture():
 	def save(self, filename):
 		f = open(filename, "w")
 		f.write(self.header)
+		for point in self.points:
+			f.write(point + "\n")
 		for region in self.regions:
 			f.write(region + "\n")
 		for line in self.lines:
 			f.write(line + "\n")
 		for text in self.texts:
 			f.write(text + "\n")
-		for point in self.points:
-			f.write(point + "\n")
 		f.write(self.footer)
 		f.close()
 
 	def colorify(self, value):
-		num = int(value*255)
-		return 'rgb({0},{0},{0})'.format(num)
+		r,g,b = floatRgb(value, 0, 1)
+		return 'rgb({0},{1},{2})'.format(r,g,b)
+
+def floatRgb(mag, cmin, cmax):
+    try: 
+    	x = float(mag-cmin)/(cmax-cmin)
+    except ZeroDivisionError: 
+    	x = 0.5 # cmax == cmin
+    blue  = min((max((4*(0.75-x), 0.)), 1.))
+    red   = min((max((4*(x-0.25), 0.)), 1.))
+    green = min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))
+    return toRGB(red), toRGB(green), toRGB(blue)
+
+def toRGB(num):
+	return int(num*255)
