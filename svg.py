@@ -1,9 +1,12 @@
 COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
 
 class Picture():
-	def __init__(self, width, height):
+	def __init__(self, w_min, w_max, h_min, h_max):
 		self.regions = []
-		self.offset = width/20 if width < height else height/20
+		self.w_min, self.w_max, self.h_min, self.h_max = w_min, w_max, h_min, h_max
+		width = w_max - w_min
+		height = h_max - h_min
+		self.offset = width/10 if width < height else height/10
 		self.x_scale, self.y_scale = self.calculate_scales(width, height)
 		self.lines = []
 		self.texts = []
@@ -23,8 +26,8 @@ class Picture():
 
 	# x1, x2, y1, y2
 	def add_rectangle(self, points, result):
-		x = points[0]*self.x_scale + self.offset
-		y = points[2]*self.y_scale + self.offset
+		x = points[0]*self.x_scale + self.offset - self.w_min
+		y = points[2]*self.y_scale + self.offset - self.h_min
 		width = (points[1]-points[0])*self.x_scale
 		height = (points[3]-points[2])*self.y_scale
 		self.regions.append('<rect x="{0}" y="{1}" width="{2}" height="{3}" style="fill:{4}" />'.\
@@ -38,16 +41,16 @@ class Picture():
 		for i in range(11):
 			y = self.offset + (height/10)*i
 			self.add_line(self.offset - self.offset/5, y, self.offset, y)
-			self.add_text(self.offset/10, y, "{0:.2f}".format((text_height/10)*i))
+			self.add_text(self.offset/20, y, "{0:.2f}".format(self.h_min + (text_height/10)*i))
 
 		for i in range(10):
 			x = self.offset + (width/10)*i
 			self.add_line(x, self.offset - self.offset/5, x, self.offset)
-			self.add_text(x - self.offset/5, self.offset/3, "{0:.2f}".format((text_width/10)*i))
+			self.add_text(x - self.offset/5, self.offset/3, "{0:.2f}".format(self.w_min + (text_width/10)*i))
 
 	def add_text(self, x, y, text):
 		self.texts.append('<text x="{0}" y="{1}" font-size="{2}">{3}</text>'\
-				  .format(x, y, self.offset/4, text))
+				  .format(x, y, self.offset/3, text))
 
 	def add_line(self, x1, y1, x2, y2):
 		self.lines.append('<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" \
