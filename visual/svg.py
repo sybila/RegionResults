@@ -1,5 +1,6 @@
 import svg
 import math
+import colorsys
 
 COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
 
@@ -68,7 +69,7 @@ class Picture():
 
 	def add_point(self, x, y, color):
 		self.points.append('<circle cx="{0}" cy="{1}"\
- r="{2}" stroke="{4}" stroke-width="{3}" fill="{4}" />'.format(x, y, self.offset/50, self.offset/500, color))
+ r="{2}" stroke="{4}" stroke-width="{3}" fill="{4}" />'.format(x, y, self.offset/25, self.offset/500, color))
 
 	def save(self, filename):
 		f = open(filename, "w")
@@ -85,18 +86,7 @@ class Picture():
 		f.close()
 
 	def colorify(self, value):
-		r,g,b = floatRgb(value, 0, 1)
-		return 'rgb({0},{1},{2})'.format(r,g,b)
+		return 'rgb(0,{0},0)'.format(getGreenShade(value))
 
-def floatRgb(mag, cmin, cmax):
-    try: 
-    	x = float(mag-cmin)/(cmax-cmin)
-    except ZeroDivisionError: 
-    	x = 0.5 # cmax == cmin
-    blue  = min((max((4*(0.75-x), 0.)), 1.))
-    red   = min((max((4*(x-0.25), 0.)), 1.))
-    green = min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))
-    return toRGB(red), toRGB(green), toRGB(blue)
-
-def toRGB(num):
-	return int(num*255)
+def getGreenShade(value):
+	return int(255*value)
