@@ -29,10 +29,12 @@ class Picture():
 		for result in rectangles:
 			self.add_rectangle(result.points, result.sat)
 
-	def load_points(self, points):
+	def load_points(self, points, min_v, max_v, normalisation):
 		for (x, y, value) in points:
 			x = x*self.x_scale + self.offset - self.w_min
 			y = y*self.y_scale + self.offset - self.h_min
+			if normalisation:
+				value = normalise(value, min_v, max_v)
 			self.add_point(x, y, self.colorify(value))
 
 	# x1, x2, y1, y2
@@ -69,7 +71,7 @@ class Picture():
 
 	def add_point(self, x, y, color):
 		self.points.append('<circle cx="{0}" cy="{1}"\
- r="{2}" stroke="{4}" stroke-width="{3}" fill="{4}" />'.format(x, y, self.offset/25, self.offset/500, color))
+ r="{2}" stroke="{4}" stroke-width="{3}" fill="{4}" />'.format(x, y, self.offset/20, self.offset/250, color))
 
 	def save(self, filename):
 		f = open(filename, "w")
@@ -86,7 +88,9 @@ class Picture():
 		f.close()
 
 	def colorify(self, value):
-		return 'rgb(0,{0},0)'.format(getGreenShade(value))
+		if value < 0.5:
+			return 'rgb(255,{0},0)'.format(int(255*(1 - normalise(value, 0, 0.5))))
+		return 'rgb({0},255,0)'.format(int(255*(normalise(value, 0.5, 1))))
 
-def getGreenShade(value):
-	return int(255*value)
+def normalise(value, min_value, max_value):
+	return (max_value - value)/(max_value - min_value)
