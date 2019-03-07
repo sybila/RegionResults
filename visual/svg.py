@@ -2,7 +2,8 @@ import svg
 import math
 import colorsys
 
-COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
+#COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
+COLORS = {-2: "gray", -1: "red", 0: "gray", 1: "green", 2: "gray"}
 
 class Picture():
 	def __init__(self, w_min, w_max, h_min, h_max):
@@ -15,7 +16,7 @@ class Picture():
 		self.lines = []
 		self.texts = []
 		self.points = []
-		self.header = '<svg width="' + str(self.width*self.x_scale + self.offset) + '" height="' + str(self.height*self.y_scale + self.offset) + '">\n'
+		self.header = '<svg width="' + str(self.width*self.x_scale + self.offset) + '" height="' + str(self.height*self.y_scale + self.offset*2) + '">\n'
 		self.footer = '</svg>'
 		self.add_axis_description(self.width*self.x_scale, self.height*self.y_scale)
 
@@ -26,10 +27,12 @@ class Picture():
 			return 1, self.width/self.height
 
 	def load_rectangles(self, rectangles):
+		self.add_legend_reactangles()
 		for result in rectangles:
 			self.add_rectangle(result.points, result.sat)
 
 	def load_points(self, points, min_v, max_v, normalisation):
+		self.add_legend_points(min_v, max_v)
 		for (x, y, value) in points:
 			x = x*self.x_scale + self.offset - self.w_min
 			y = y*self.y_scale + self.offset - self.h_min
@@ -48,26 +51,49 @@ class Picture():
 
 	def add_axis_description(self, scaled_width, scaled_height):
 		self.add_line(self.offset, self.offset, \
-					  self.offset, self.offset + scaled_height)
+					  self.offset, self.offset + scaled_height, "black")
 		self.add_line(self.offset, self.offset, \
-					  self.offset + scaled_width, self.offset)
+					  self.offset + scaled_width, self.offset, "black")
 		for i in range(11):
 			y = self.offset + (scaled_height/10)*i
-			self.add_line(self.offset - self.offset/5, y, self.offset, y)
+			self.add_line(self.offset - self.offset/5, y, self.offset, y, "black")
 			self.add_text(self.offset/20, y, "{0:.2f}".format(self.h_min + (self.height/10)*i))
 
 		for i in range(10):
 			x = self.offset + (scaled_width/10)*i
-			self.add_line(x, self.offset - self.offset/5, x, self.offset)
+			self.add_line(x, self.offset - self.offset/5, x, self.offset, "black")
 			self.add_text(x - self.offset/5, self.offset/2, "{0:.2f}".format(self.w_min + (self.width/10)*i))
+
+	def add_legend_reactangles(self):
+		texts = ["TRUE", "FALSE", "UNKNOWN"]
+		colors = ["green", "red", "gray"]
+		y = self.height*self.y_scale + self.offset*1.5
+		for i in range(len(texts)):
+			self.add_text((self.width*(4/5)/3)*(i+1), y, texts[i])
+		for i in range(len(colors)):
+			self.regions.append('<rect x="{0}" y="{1}" width="{2}" height="{3}" style="fill:{4}" />'.\
+				format((self.width*(1/5))*(i+1) + i*(self.width/15), y - self.offset/4, self.width/20, self.height/10, colors[i]))
+
+	def add_legend_points(self, min_v, max_v):
+		x = self.width*(2/5)
+		y = self.height*self.y_scale + self.offset*1.5
+		x_range = 255**2
+		for i in range(x_range):
+			self.add_line(x + x*((i)/x_range), y - self.offset/4, x + x*((i)/x_range), y, self.colorify(i/x_range))
+		self.add_line(x, y, 2*x, y, "black")
+		for i in range(3):
+			self.add_line(self.width*((i+2)/5), y, self.width*((i+2)/5), y + self.offset/10, "black")
+		values = [min_v, (min_v + max_v)/2, max_v]
+		for i in range(len(values)):
+			self.add_text(self.width*((i+2)/5) - self.width/25, y + self.offset/3, "%.2f" % values[i])
 
 	def add_text(self, x, y, text):
 		self.texts.append('<text x="{0}" y="{1}" font-size="{2}">{3}</text>'\
 				  .format(x, y, self.offset/4, text))
 
-	def add_line(self, x1, y1, x2, y2):
+	def add_line(self, x1, y1, x2, y2, color):
 		self.lines.append('<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" \
- style="stroke:black;stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/30))
+ style="stroke:{5};stroke-width:{4}"/>'.format(x1, y1, x2, y2, self.offset/30, color))
 
 	def add_point(self, x, y, color):
 		self.points.append('<circle cx="{0}" cy="{1}"\
