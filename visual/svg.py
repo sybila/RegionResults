@@ -3,7 +3,7 @@ import math
 import colorsys
 
 #COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
-COLORS = {-2: "gray", -1: "red", 0: "gray", 1: "green", 2: "gray"}
+COLORS = {-2: "gray", -1: "red", 0: "gray", 1: "rgb(0,255,0)", 2: "gray"}
 
 class Picture():
 	def __init__(self, w_min, w_max, h_min, h_max):
@@ -83,7 +83,7 @@ class Picture():
 		self.add_line(x, y, 2*x, y, "black")
 		for i in range(3):
 			self.add_line(self.width*((i+2)/5), y, self.width*((i+2)/5), y + self.offset/10, "black")
-		values = [min_v, (min_v + max_v)/2, max_v]
+		values = [max_v, (min_v + max_v)/2, min_v]
 		for i in range(len(values)):
 			self.add_text(self.width*((i+2)/5) - self.width/25, y + self.offset/3, "%.2f" % values[i])
 
@@ -116,7 +116,7 @@ class Picture():
 	def colorify(self, value):
 		if value < 0.5:
 			return 'rgb(255,{0},0)'.format(int(255*(1 - normalise(value, 0, 0.5))))
-		return 'rgb({0},255,0)'.format(int(255*(normalise(value, 0.5, 1))))
+		return 'rgb({0},{1},0)'.format(int(255*(normalise(value, 0.5, 1))), 128 + int(128*(normalise(value, 0.5, 1))))
 
 def normalise(value, min_value, max_value):
 	return (max_value - value)/(max_value - min_value)
