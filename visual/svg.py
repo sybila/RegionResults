@@ -3,7 +3,7 @@ import math
 import colorsys
 
 #COLORS = {-2: "#cc5700", -1: "red", 0: "gray", 1: "green", 2: "#1fb842"}
-COLORS = {-2: "gray", -1: "red", 0: "gray", 1: "rgb(0,255,0)", 2: "gray"}
+COLORS = {-2: "gray", -1: "red", 0: "gray", 1: "green", 2: "gray"}
 
 class Picture():
 	def __init__(self, w_min, w_max, h_min, h_max):
