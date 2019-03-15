@@ -21,7 +21,7 @@ def samplePoints(function, params, keys):
 	return results
 
 '''
-python3 run.py <function-to-sample> <parameters> <output_file>
+python3 sample.py <function-to-sample> <parameters> <output_file>
 
 where <parameters> is a dictionary of type:
 	"param-name" : [From, To, Number]
