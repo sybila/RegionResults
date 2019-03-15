@@ -1,4 +1,4 @@
-import result
+from .result import *
 from fractions import Fraction
 
 RESULTS = {"ExistsViolated": -2, "AllViolated": -1, "AllSat": 1, "Unknown": 0, "ExistsSat": 2}
@@ -32,4 +32,4 @@ class Parser():
 
 		for key in RESULTS.keys():
 			if key in sat:
-				return result.Result(points, RESULTS[key])
+				return Result(points, RESULTS[key])

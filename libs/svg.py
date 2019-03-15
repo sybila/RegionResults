@@ -1,4 +1,3 @@
-import svg
 import math
 import colorsys
 
