@@ -24,7 +24,8 @@ if __name__ == '__main__':
 	parser.parse_file(filename)
 
 	w_min, w_max, h_min, h_max = get_max_results(parser.regions)
+	bounds = {"w_min": w_min, "w_max": w_max, "h_min": h_min, "h_max": h_max}
 
-	pic = libs.svg.Picture(w_min, w_max, h_min, h_max)
-	pic.load_rectangles(parser.regions)
+	pic = libs.svg.Picture(bounds)
+	pic.load_rectangles(parser.regions, bounds)
 	pic.save(output_name)
