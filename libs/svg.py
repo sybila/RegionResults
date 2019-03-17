@@ -86,12 +86,12 @@ class Picture():
 		texts = ["TRUE", "FALSE", "UNKNOWN"]
 		colors = ["green", "red", "gray"]
 
-		y = self.height_bounds["max"] + 50
+		y = self.height_bounds["max"] + 40
 
 		for i in range(len(texts)):
-			self.add_text(self.width_bounds["min"] + 35 + 150*i, y + 20, 0, texts[i], 20)
+			self.add_text(self.width_bounds["min"] + 70 + 150*i, y + 20, 0, texts[i], 20)
 		for i in range(len(colors)):
-			self.add_rectangle(self.width_bounds["min"] + 150*i, y, 25, 25, colors[i])
+			self.add_rectangle(self.width_bounds["min"] + 35 + 150*i, y, 25, 25, colors[i])
 
 	def add_legend_points(self, min_v, max_v):
 		x = self.width_bounds["min"] + 100

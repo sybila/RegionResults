@@ -14,7 +14,7 @@ def get_max_results(regions):
 python3 visualise.py <Storm-output-in-a-file> <output-svg-file>
 
 Example:
-	python3 visualise.py storm_stdout.txt picture.svg
+	python3 visualise.py example/storm_stdout.txt picture.svg
 '''
 if __name__ == '__main__':
 	filename = sys.argv[-2]
