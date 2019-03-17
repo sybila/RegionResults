@@ -23,7 +23,7 @@ class Picture():
 		self.width_bounds['len'] = self.width_bounds['max'] - self.width_bounds['min']
 		self.height_bounds =  {'min': 100, 'max': 600}
 		self.height_bounds['len'] = self.height_bounds['max'] - self.height_bounds['min']
-		self.header = '<svg width="{0}" height="{1}">\n'.format(self.width_bounds['max'], self.height_bounds['max'] + 100)
+		self.header = '<svg width="{0}" height="{1}">\n'.format(self.width_bounds['max'] + 20, self.height_bounds['max'] + 100)
 		self.footer = '</svg>'
 		self.lines = []
 		self.texts = []
@@ -33,7 +33,7 @@ class Picture():
 		self.axis_description()
 
 	def axis_description(self):
-		x_axis = np.linspace(self.bounds["w_min"], self.bounds["w_max"], 11)[:-1]
+		x_axis = np.linspace(self.bounds["w_min"], self.bounds["w_max"], 11)
 		y_axis = np.linspace(self.bounds["h_min"], self.bounds["h_max"], 11)
 
 		self.add_line(self.width_bounds['min'], self.width_bounds['min'], \
@@ -44,9 +44,9 @@ class Picture():
 		for i in range(11):
 			y = self.height_bounds["min"] + (self.height_bounds["len"]/10)*i
 			self.add_line(self.width_bounds["min"], y, self.width_bounds["min"] - 20, y, "black")
-			self.add_text(10, y + 5, 0, "{0:.2f}".format(y_axis[i]))
+			self.add_text(5, y + 5, 0, "{0:.2f}".format(y_axis[i]))
 
-		for i in range(10):
+		for i in range(11):
 			x = self.width_bounds["min"] + (self.width_bounds["len"]/10)*i
 			self.add_line(x, self.height_bounds['min'], x, self.height_bounds['min'] - 20, "black")
 			self.add_text(x - self.width_bounds["len"]/10, 30, 45, "{0:.2f}".format(x_axis[i]))
@@ -65,7 +65,7 @@ class Picture():
 
 	def add_point(self, x, y, color):
 		self.points.append('<circle cx="{0}" cy="{1}" r="{2}" stroke="{4}" stroke-width="{3}" fill="{4}" />'\
-				  .format(x, y, 10, 10, color))
+				  .format(x, y, 3, 3, color))
 
 	def save(self, filename):
 		f = open(filename, "w")
@@ -116,16 +116,27 @@ class Picture():
 			self.add_rectangle(x, y, width, height, COLORS[rectangle.sat])
 
 	def normalise_rectangle(self, points, bounds):
-		return [to_picture(normalise(points[0], bounds['w_max'], bounds['w_min']), self.width_bounds['len'], self.width_bounds['min']),
-				to_picture(normalise(points[1], bounds['w_max'], bounds['w_min']), self.width_bounds['len'], self.width_bounds['min']),
-				to_picture(normalise(points[2], bounds['h_max'], bounds['h_min']), self.height_bounds['len'], self.height_bounds['min']),
-				to_picture(normalise(points[3], bounds['h_max'], bounds['h_min']), self.height_bounds['len'], self.height_bounds['min'])]
+		return [fit_to_picture(normalise(points[0], bounds['w_max'], bounds['w_min']), self.width_bounds['len'], self.width_bounds['min']),
+				fit_to_picture(normalise(points[1], bounds['w_max'], bounds['w_min']), self.width_bounds['len'], self.width_bounds['min']),
+				fit_to_picture(normalise(points[2], bounds['h_max'], bounds['h_min']), self.height_bounds['len'], self.height_bounds['min']),
+				fit_to_picture(normalise(points[3], bounds['h_max'], bounds['h_min']), self.height_bounds['len'], self.height_bounds['min'])]
 
-	def load_points(self, points, min_v, max_v, normalisation):
-		self.add_legend_points(min_v, max_v)
+	def load_points(self, points, min_p, max_p, bounds, normalisation=True):
+		self.add_legend_points(min_p, max_p)
+		for (x, y, p) in points:
+			x = fit_to_picture(normalise(x, bounds['w_max'], bounds['w_min']), self.width_bounds['len'], self.width_bounds['min'])
+			y = fit_to_picture(normalise(y, bounds['h_max'], bounds['h_min']), self.height_bounds['len'], self.height_bounds['min'])
+			if normalisation:
+				p = normalise(p, max_p, min_p)
+			self.add_point(x, y, colorify(p))
 
 def normalise(value, min_value, max_value):
 	return (max_value - value)/(max_value - min_value)
 
-def to_picture(value, multi, add):
+def fit_to_picture(value, multi, add):
 	return value*multi + add
+
+def colorify(value):
+	if value < 0.5:
+		return 'rgb(255,{0},0)'.format(int(255*(1 - normalise(value, 0, 0.5))))
+	return 'rgb({0},{1},0)'.format(int(255*(normalise(value, 0.5, 1))), 128 + int(128*(normalise(value, 0.5, 1))))

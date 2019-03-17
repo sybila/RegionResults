@@ -46,8 +46,9 @@ if __name__ == '__main__':
 	points = samplePoints(function, params, keys)
 	probs = column(points, 2)
 
-	normalisation = True
+	bounds = {"w_min": params[keys[0]][0], "w_max": params[keys[0]][1], 
+			  "h_min": params[keys[1]][0], "h_max": params[keys[1]][1]}
 
-	pic = libs.svg.Picture(*params[keys[0]][:-1], *params[keys[1]][:-1])
-	pic.load_points(points, max(probs), min(probs), normalisation)
+	pic = libs.svg.Picture(bounds)
+	pic.load_points(points, min(probs), max(probs), bounds)
 	pic.save(output_file)
