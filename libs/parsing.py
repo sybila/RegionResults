@@ -1,4 +1,4 @@
-from .result import *
+from .region import *
 from fractions import Fraction
 
 RESULTS = {"ExistsViolated": -2, "CenterViolated": -2, "AllViolated": -1,
@@ -9,23 +9,23 @@ RESULTS = {"ExistsViolated": -2, "CenterViolated": -2, "AllViolated": -1,
 class Parser():
     def __init__(self):
         self.regions = []
+        self.params = []
 
     def parse_file(self, filename):
         input_file = open(filename, "r")
         start = False
-        params = []
         for line in input_file.readlines():
             if line.rstrip():
                 if "Command line arguments" in line:
-                    params = self.get_params(line)
+                    self.params = self.get_params(line)
                 elif "Region results:" in line:
                     start = True
                 elif "Region refinement" in line:
                     start = False
                 elif start:
-                    self.regions.append(self.parse_region(line, params))
+                    self.regions.append(self.parse_region(line))
 
-    def parse_region(self, line, params):
+    def parse_region(self, line):
         region, sat = line.split(";")[0], line.split(";")[1]
         parts = region.split(",")
 
@@ -33,12 +33,12 @@ class Parser():
 
         for part in parts:
             fractions = part.split("<=")
-            values = [float(Fraction(fractions[0])), float(Fraction(fractions[2]))]
+            values = (float(Fraction(fractions[0])), float(Fraction(fractions[2])))
             points[fractions[1]] = values
 
         for key in RESULTS.keys():
             if key in sat:
-                return Result(points[params[0]] + points[params[1]], RESULTS[key])
+                return Region(points, RESULTS[key])
 
     def get_params(self, line):
         params = []

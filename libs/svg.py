@@ -35,8 +35,8 @@ class Picture():
         self.axis_description()
 
     def axis_description(self):
-        x_axis = np.linspace(self.bounds["w_min"], self.bounds["w_max"], 11)
-        y_axis = np.linspace(self.bounds["h_min"], self.bounds["h_max"], 11)
+        x_axis = np.linspace(self.bounds["x_min"], self.bounds["x_max"], 11)
+        y_axis = np.linspace(self.bounds["y_min"], self.bounds["y_max"], 11)
 
         self.add_line(self.width_bounds['min'], self.width_bounds['min'],
                       self.width_bounds['max'], self.width_bounds['min'], "black")
@@ -108,25 +108,25 @@ class Picture():
                           "black", 3)
             self.add_text(x - 30 + i * 125, y - 10, 0, "%.2f" % values[i])
 
-    def load_rectangles(self, rectangles, bounds):
+    def load_rectangles(self, regions, x, y):
         self.add_legend_reactangles()
-        for rectangle in rectangles:
-            norm_points = self.normalise_rectangle(rectangle.points, bounds)
-            x = norm_points[0]
-            y = norm_points[2]
+        for region in regions:
+            norm_points = self.normalise_rectangle(region, x, y)
+            x_pos = norm_points[0]
+            y_pos = norm_points[2]
             width = (norm_points[1] - norm_points[0])
             height = (norm_points[3] - norm_points[2])
-            self.add_rectangle(x, y, width, height, COLORS[rectangle.sat])
+            self.add_rectangle(x_pos, y_pos, width, height, COLORS[region.sat])
 
-    def normalise_rectangle(self, points, bounds):
-        return [fit_to_picture(normalise(points[0], bounds['w_max'], bounds['w_min']), self.width_bounds['len'],
-                               self.width_bounds['min']),
-                fit_to_picture(normalise(points[1], bounds['w_max'], bounds['w_min']), self.width_bounds['len'],
-                               self.width_bounds['min']),
-                fit_to_picture(normalise(points[2], bounds['h_max'], bounds['h_min']), self.height_bounds['len'],
-                               self.height_bounds['min']),
-                fit_to_picture(normalise(points[3], bounds['h_max'], bounds['h_min']), self.height_bounds['len'],
-                               self.height_bounds['min'])]
+    def normalise_rectangle(self, region, x, y):
+        return [fit_to_picture(normalise(region.projection(x)[0], self.bounds['x_max'], self.bounds['x_min']),
+                               self.width_bounds['len'], self.width_bounds['min']),
+                fit_to_picture(normalise(region.projection(x)[1], self.bounds['x_max'], self.bounds['x_min']),
+                               self.width_bounds['len'], self.width_bounds['min']),
+                fit_to_picture(normalise(region.projection(y)[0], self.bounds['y_max'], self.bounds['y_min']),
+                               self.height_bounds['len'], self.height_bounds['min']),
+                fit_to_picture(normalise(region.projection(y)[1], self.bounds['y_max'], self.bounds['y_min']),
+                               self.height_bounds['len'], self.height_bounds['min'])]
 
     def load_points(self, points, min_p, max_p, bounds, normalisation=True):
         self.add_legend_points(min_p, max_p)

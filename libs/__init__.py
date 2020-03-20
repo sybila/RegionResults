@@ -1,3 +1,3 @@
 from .svg import *
 from .parsing import *
-from .result import *
+from .region import *
