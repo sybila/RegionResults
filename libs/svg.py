@@ -34,6 +34,19 @@ class Picture():
         self.bounds = bounds
         self.axis_description()
 
+    def __str__(self):
+        output = self.header
+        for point in self.points:
+            output += point + " "
+        for region in self.regions:
+            output += region + " "
+        for line in self.lines:
+            output += line + " "
+        for text in self.texts:
+            output += text + " "
+            output += self.footer
+        return output
+
     def axis_description(self):
         x_axis = np.linspace(self.bounds["x_min"], self.bounds["x_max"], 11)
         y_axis = np.linspace(self.bounds["y_min"], self.bounds["y_max"], 11)
