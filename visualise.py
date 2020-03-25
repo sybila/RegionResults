@@ -27,7 +27,6 @@ if __name__ == '__main__':
         pic.load_rectangles(parser.regions, x, y)
         # print vars
         f.write('\t\t\tvar {}_{} = "data:image/svg+xml;utf8,{}"\n'.format(x, y, pic))
-        pic.save("out_{}_{}.svg".format(x, y))
 
     # print mid
     f.write(libs.html.HTML_mid)
