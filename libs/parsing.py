@@ -20,7 +20,7 @@ class Parser():
                     self.params = self.get_params(line)
                 elif "Region results:" in line:
                     start = True
-                elif "Region refinement" in line:
+                elif "Region refinement" in line or "Time for model checking" in line:
                     start = False
                 elif start:
                     self.regions.append(self.parse_region(line))
