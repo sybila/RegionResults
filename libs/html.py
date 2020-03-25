@@ -1,10 +1,25 @@
 def print_option(option, selected=False):
-    return "\t<option value='{0}'{1}>{0}</option>\n".format(option, " selected" if selected else "")
+    return "\t\t<option value='{0}'{1}>{0}</option>\n".format(option, " selected" if selected else "")
 
 HTML_start = """
 <html>
 <head>
     <title>Select Image</title>
+
+    <style>
+        #combos {
+            text-align: center;
+            width: 620px;
+        }
+
+        #x_axis {
+            margin: 0 50px 0 0;
+        }
+
+        body {
+            font-size: 25px;
+        }
+    </style>
 
     <script type="text/javascript">
         function loadImage() {
@@ -56,23 +71,23 @@ HTML_mid = """
     </script>
 </head>
 <body onload="loadImage()">
-<img id="plot">
-"""
+    <img id="plot">
+    <div id="combos">"""
 
 HTML_x_axis = """
-<label for="x_axis">X-axis</label>
-<select id="x_axis" onchange="optionChanged(this);">
+    <label for="x_axis">X-axis</label>
+    <select id="x_axis" onchange="optionChanged(this);">
 """
 
 HTML_y_axis = \
-"""</select>
+"""    </select>
 
-<label for="y_axis">Y-axis</label>
-<select id="y_axis" onchange="optionChanged(this);">
+    <label for="y_axis">Y-axis</label>
+    <select id="y_axis" onchange="optionChanged(this);">
 """
 
 HTML_end = \
-"""</select>
-
+"""    </select>
+    </div>
 </body>
 </html>"""
