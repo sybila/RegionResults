@@ -121,15 +121,16 @@ class Picture():
                           'black', 3)
             self.add_text(x - 30 + i * 125, y - 10, 0, '%.2f' % values[i])
 
-    def load_rectangles(self, regions, x, y):
+    def load_rectangles(self, regions, x, y, dims):
         self.add_legend_reactangles()
         for region in regions:
-            norm_points = self.normalise_rectangle(region, x, y)
-            x_pos = norm_points[0]
-            y_pos = norm_points[2]
-            width = (norm_points[1] - norm_points[0])
-            height = (norm_points[3] - norm_points[2])
-            self.add_rectangle(x_pos, y_pos, width, height, COLORS[region.sat])
+            if region.check_other_dims(dims):
+                norm_points = self.normalise_rectangle(region, x, y)
+                x_pos = norm_points[0]
+                y_pos = norm_points[2]
+                width = (norm_points[1] - norm_points[0])
+                height = (norm_points[3] - norm_points[2])
+                self.add_rectangle(x_pos, y_pos, width, height, COLORS[region.sat])
 
     def normalise_rectangle(self, region, x, y):
         return [fit_to_picture(normalise(region.projection(x)[0], self.bounds['x_max'], self.bounds['x_min']),

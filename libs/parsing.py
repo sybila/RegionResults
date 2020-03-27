@@ -1,5 +1,6 @@
 from .region import *
 from fractions import Fraction
+from numpy import inf
 
 RESULTS = {"ExistsViolated": -2, "CenterViolated": -2, "AllViolated": -1,
            "Unknown": 0, "ExistsBoth": 0,
@@ -10,6 +11,7 @@ class Parser():
     def __init__(self):
         self.regions = []
         self.params = []
+        self.bounds = dict()
 
     def parse_file(self, filename):
         input_file = open(filename, "r")
@@ -17,7 +19,7 @@ class Parser():
         for line in input_file.readlines():
             if line.rstrip():
                 if "Command line arguments" in line:
-                    self.params = self.get_params(line)
+                    self.params, self.bounds = self.get_params_and_bounds(line)
                 elif "Region results:" in line:
                     start = True
                 elif "Region refinement" in line or "Time for model checking" in line:
@@ -40,11 +42,17 @@ class Parser():
             if key in sat:
                 return Region(points, RESULTS[key])
 
-    def get_params(self, line):
+    def get_params_and_bounds(self, line):
         params = []
+        bounds = dict()
         ranges = line.split("--region '")[1].split("' --refine")[0]
         parts = ranges.split(",")
         for part in parts:
             names = part.split("<=")
             params.append(names[1])
-        return params
+            bounds[names[1]] = [float(names[0]), float(names[2])]
+        return params, bounds
+
+    def get_bounds(self, x, y):
+        return {"x_min": self.bounds[x][0], "x_max": self.bounds[x][1],
+                "y_min": self.bounds[y][0], "y_max": self.bounds[y][1]}
